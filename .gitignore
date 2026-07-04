@@ -1,0 +1,6 @@
+/target
+/Cargo.lock
+*.pyd
+*.pyc
+__pycache__
+.env

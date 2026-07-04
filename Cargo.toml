@@ -1,0 +1,55 @@
+[package]
+name = "rust-quant-engine"
+version = "0.1.0"
+edition = "2021"
+description = "High-performance backtesting engine in Rust with Python bindings"
+license = "MIT"
+repository = "https://github.com/DiyaHussein/rust-quant-engine"
+keywords = ["backtesting", "quantitative", "finance", "trading", "rust"]
+categories = ["finance", "science"]
+
+[dependencies]
+# Core
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+csv = "1.3"
+thiserror = "2.0"
+
+# Math
+ndarray = "0.16"
+statrs = "0.17"
+rand = "0.8"
+rand_distr = "0.4"
+
+# Concurrency
+tokio = { version = "1", features = ["full"] }
+
+# Python bindings
+pyo3 = { version = "0.23", features = ["extension-module"] }
+
+# Logging
+log = "0.4"
+env_logger = "0.11"
+
+[dev-dependencies]
+criterion = "0.5"
+tempfile = "3"
+approx = "0.5"
+
+[lib]
+name = "quant_engine"
+crate-type = ["cdylib", "rlib"]
+
+[[bench]]
+name = "backtest_bench"
+harness = false
+
+[[bench]]
+name = "orderbook_bench"
+harness = false
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
