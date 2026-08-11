@@ -1,6 +1,6 @@
 # rust-quant-engine
 
-[![CI](https://github.com/DiyaHussein/rust-quant-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/DiyaHussein/rust-quant-engine/actions/workflows/ci.yml)
+[![CI](https://github.com/DiyaHussein/rust-quant-engine/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/DiyaHussein/rust-quant-engine/actions/workflows/ci.yml)
 [![Crates.io](https://img.shields.io/crates/v/rust-quant-engine)](https://crates.io/crates/rust-quant-engine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
