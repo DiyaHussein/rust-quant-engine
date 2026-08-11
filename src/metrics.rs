@@ -55,11 +55,7 @@ impl Metrics {
     /// `returns` should be the return of each trade relative to entry.
     /// `equity_curve` is the equity value at each bar.
     /// `periods_per_year` scales annualization (e.g., 252 for daily bars).
-    pub fn compute(
-        returns: &[f64],
-        equity_curve: &[f64],
-        periods_per_year: f64,
-    ) -> Self {
+    pub fn compute(returns: &[f64], equity_curve: &[f64], periods_per_year: f64) -> Self {
         if returns.is_empty() || equity_curve.len() < 2 {
             return Self::empty();
         }
@@ -101,7 +97,9 @@ impl Metrics {
             total_trades: returns.len(),
             winning_trades: winning.len(),
             losing_trades: losing.len(),
-            win_rate_pct: if returns.is_empty() { 0.0 } else {
+            win_rate_pct: if returns.is_empty() {
+                0.0
+            } else {
                 (winning.len() as f64 / returns.len() as f64) * 100.0
             },
             avg_win_pct: if !winning.is_empty() {

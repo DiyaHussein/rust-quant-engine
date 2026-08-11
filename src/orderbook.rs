@@ -3,8 +3,8 @@
 //! Uses BTreeMap for sorted price levels (bids descending, asks ascending).
 //! Includes spread modeling, slippage estimation, and market impact.
 
-use crate::types::*;
 use crate::error::QuantResult;
+use crate::types::*;
 use std::collections::BTreeMap;
 
 /// Price level in the order book
@@ -73,7 +73,12 @@ impl OrderBook {
     }
 
     /// Submit a limit order. Returns the order with its assigned ID.
-    pub fn submit_limit(&mut self, side: Side, price: Price, quantity: Quantity) -> QuantResult<Order> {
+    pub fn submit_limit(
+        &mut self,
+        side: Side,
+        price: Price,
+        quantity: Quantity,
+    ) -> QuantResult<Order> {
         let id = self.next_id;
         self.next_id += 1;
         let order = Order {
@@ -112,7 +117,7 @@ impl OrderBook {
     /// Cancel an active order by ID
     pub fn cancel_order(&mut self, order_id: OrderId) -> QuantResult<()> {
         // Check bids
-        for (_, level) in self.bids.iter_mut() {
+        for level in self.bids.values_mut() {
             if let Some(pos) = level.orders.iter().position(|o| o.id == order_id) {
                 level.orders[pos].status = OrderStatus::Cancelled;
                 level.total_volume -= level.orders[pos].remaining();
@@ -122,7 +127,7 @@ impl OrderBook {
             }
         }
         // Check asks
-        for (_, level) in self.asks.iter_mut() {
+        for level in self.asks.values_mut() {
             if let Some(pos) = level.orders.iter().position(|o| o.id == order_id) {
                 level.orders[pos].status = OrderStatus::Cancelled;
                 level.total_volume -= level.orders[pos].remaining();
@@ -137,16 +142,18 @@ impl OrderBook {
     pub fn best_bid(&self) -> Option<Price> {
         // Bids are stored with OrderKey; highest original price = first
         // Since OrderKey is ascending, we want the last (max) element
-        self.bids.keys().last().map(|k| {
-            k.price_int as f64 * self.tick_size
-        })
+        self.bids
+            .keys()
+            .last()
+            .map(|k| k.price_int as f64 * self.tick_size)
     }
 
     /// Get the best ask price
     pub fn best_ask(&self) -> Option<Price> {
-        self.asks.keys().next().map(|k| {
-            k.price_int as f64 * self.tick_size
-        })
+        self.asks
+            .keys()
+            .next()
+            .map(|k| k.price_int as f64 * self.tick_size)
     }
 
     /// Get the mid price
@@ -160,12 +167,17 @@ impl OrderBook {
     /// Estimate slippage for a given order size in bps
     pub fn estimate_slippage_bps(&self, side: Side, quantity: Quantity) -> f64 {
         let levels = match side {
-            Side::Buy => self.asks.iter().map(|(k, v)| {
-                (k.price_int as f64 * self.tick_size, v.total_volume)
-            }).collect::<Vec<_>>(),
-            Side::Sell => self.bids.iter().rev().map(|(k, v)| {
-                (k.price_int as f64 * self.tick_size, v.total_volume)
-            }).collect::<Vec<_>>(),
+            Side::Buy => self
+                .asks
+                .iter()
+                .map(|(k, v)| (k.price_int as f64 * self.tick_size, v.total_volume))
+                .collect::<Vec<_>>(),
+            Side::Sell => self
+                .bids
+                .iter()
+                .rev()
+                .map(|(k, v)| (k.price_int as f64 * self.tick_size, v.total_volume))
+                .collect::<Vec<_>>(),
         };
 
         if levels.is_empty() {
@@ -210,14 +222,9 @@ impl OrderBook {
             Side::Sell => &mut self.asks,
         };
 
-        book.entry(key)
-            .or_default()
-            .total_volume += order.remaining();
+        book.entry(key).or_default().total_volume += order.remaining();
 
-        book.entry(key)
-            .or_default()
-            .orders
-            .push(order.clone());
+        book.entry(key).or_default().orders.push(order.clone());
     }
 
     #[allow(unused_assignments)]

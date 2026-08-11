@@ -20,16 +20,16 @@
 //! See `benchmarks/` for detailed performance comparisons against backtrader and vectorbt.
 //! Target: 50x faster than Python-native backtesters on tick-level data.
 
-pub mod orderbook;
 pub mod backtest;
-pub mod metrics;
-pub mod types;
 pub mod data;
 pub mod error;
+pub mod metrics;
+pub mod orderbook;
+pub mod types;
 
-pub use orderbook::OrderBook;
 pub use backtest::{Backtest, BacktestConfig};
-pub use metrics::{Metrics, MetricsSummary};
-pub use types::*;
 pub use data::*;
 pub use error::QuantError;
+pub use metrics::{Metrics, MetricsSummary};
+pub use orderbook::OrderBook;
+pub use types::*;

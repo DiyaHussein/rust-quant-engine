@@ -72,7 +72,13 @@ pub struct Bar {
 
 impl Order {
     /// Create a new limit order
-    pub fn limit(id: OrderId, side: Side, price: Price, quantity: Quantity, ts: NaiveDateTime) -> Self {
+    pub fn limit(
+        id: OrderId,
+        side: Side,
+        price: Price,
+        quantity: Quantity,
+        ts: NaiveDateTime,
+    ) -> Self {
         Self {
             id,
             side,
@@ -113,6 +119,9 @@ impl Order {
 
     /// Whether the order is still active (can receive fills)
     pub fn is_active(&self) -> bool {
-        matches!(self.status, OrderStatus::Pending | OrderStatus::PartiallyFilled)
+        matches!(
+            self.status,
+            OrderStatus::Pending | OrderStatus::PartiallyFilled
+        )
     }
 }

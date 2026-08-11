@@ -3,12 +3,12 @@
 //! Simulates strategy execution against historical data with realistic
 //! spread, slippage, and commission modeling.
 
-use crate::orderbook::OrderBook;
-use crate::metrics::Metrics;
-use crate::types::*;
-use std::collections::VecDeque;
 #[cfg(test)]
 use crate::data::generate_synthetic_bars;
+use crate::metrics::Metrics;
+use crate::orderbook::OrderBook;
+use crate::types::*;
+use std::collections::VecDeque;
 
 /// Commission model
 #[derive(Debug, Clone)]
@@ -46,9 +46,7 @@ impl SlippageModel {
     pub fn apply(&self, _side: Side, _quantity: Quantity, ob: &OrderBook) -> f64 {
         match self {
             SlippageModel::FixedBps(bps) => *bps,
-            SlippageModel::OrderBookDepth => {
-                ob.estimate_slippage_bps(_side, _quantity)
-            }
+            SlippageModel::OrderBookDepth => ob.estimate_slippage_bps(_side, _quantity),
             SlippageModel::None => 0.0,
         }
     }
@@ -181,7 +179,10 @@ impl Backtest {
             } else if !signal && position_open {
                 // SELL (close position)
                 let price = bar.close;
-                let slippage_bps = self.config.slippage.apply(Side::Sell, 1.0, &self.order_book);
+                let slippage_bps = self
+                    .config
+                    .slippage
+                    .apply(Side::Sell, 1.0, &self.order_book);
                 let exec_price = if matches!(self.config.slippage, SlippageModel::None) {
                     price
                 } else {
