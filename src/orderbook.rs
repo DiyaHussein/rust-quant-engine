@@ -220,6 +220,7 @@ impl OrderBook {
             .push(order.clone());
     }
 
+    #[allow(unused_assignments)]
     fn match_order(&mut self, mut order: Order) -> QuantResult<Vec<Fill>> {
         let mut fills = Vec::new();
         let opposing = match order.side {
@@ -284,6 +285,7 @@ impl OrderBook {
 
         if order.filled > 0.0 {
             self.last_price = fills.last().map(|f| f.price).unwrap_or(self.last_price);
+            // Update incoming order status (caller may inspect)
             order.status = if order.is_filled() {
                 OrderStatus::Filled
             } else {

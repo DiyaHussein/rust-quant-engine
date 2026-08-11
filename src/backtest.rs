@@ -7,6 +7,8 @@ use crate::orderbook::OrderBook;
 use crate::metrics::Metrics;
 use crate::types::*;
 use std::collections::VecDeque;
+#[cfg(test)]
+use crate::data::generate_synthetic_bars;
 
 /// Commission model
 #[derive(Debug, Clone)]
@@ -102,6 +104,7 @@ pub struct Backtest {
     equity_curve: Vec<(chrono::NaiveDateTime, f64)>,
     trades: Vec<Trade>,
     position: f64,
+    #[allow(dead_code)]
     pending_orders: VecDeque<Order>,
     trade_returns: Vec<f64>,
 }
